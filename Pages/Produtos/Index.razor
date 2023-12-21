@@ -30,7 +30,15 @@
                 <td>@produto.Categoria?.Nome</td>
                 <td>@produto.DataCriacao.ToString("dd/MM/yyyy")</td>
                 <td>@produto.DataAlteracao?.ToString("dd/MM/yyyy")</td>
-                <td>@produto.Ativo</td>
+                @if (produto.Ativo == true)
+                {
+                    <td>Sim</td>
+                }
+                else
+                {
+                    <td>Não</td>                    
+                }
+
                 <td>
                     <a href="produtos/editar/@produto.Id" class="btn">
                         <i class="oi oi-pencil"></i>
