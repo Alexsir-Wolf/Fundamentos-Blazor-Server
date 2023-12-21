@@ -1,6 +1,6 @@
 ﻿@page "/produtos/criar"
 @inject AppDbContext _context
-@inject NavigationManager _navigationManager
+@inject NavigationManager _navManager
 
 <h3>Produtos</h3>
 
@@ -55,7 +55,7 @@
     protected override async Task OnInitializedAsync()
     {
         _categorias = await _context
-            .Categorias
+            .Categoria
             .AsNoTracking()
             .ToListAsync();
 
@@ -66,17 +66,17 @@
     {
         try
         {
+            _model.Ativo = true;
+            _model.DataCriacao = DateTime.Now;
+
             await _context.Set<Produto>().AddAsync(_model);
             await _context.SaveChangesAsync();
 
-            _navigationManager.NavigateTo("/produtos");
+            _navManager.NavigateTo("/produtos");
         }
         catch (Exception)
         {
             _errorMessage = "Falha ao persistir os dados.";
         }
-
     }
-
-
 }

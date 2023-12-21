@@ -1,9 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using FundamentosBlazorServer.Models.Base;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FundamentosBlazorServer.Models;
 
-public class Produto
+public class Produto : BaseEntity<int>
 {
     public Produto()
     {            
@@ -23,7 +24,7 @@ public class Produto
 
 
     [Required(ErrorMessage = "Id é obrigatório")]
-    public int Id { get; set; }
+    public override int Id { get; set; }
 
     [Required(ErrorMessage = "Nome é obrigatório")]
     [MaxLength(50, ErrorMessage = "Nome deve conter no máximo de 50 caracteres")]
@@ -39,5 +40,5 @@ public class Produto
     public int CategoriaId { get; set; }
 
     [ForeignKey("CategoriaId")]
-    public Categoria? Categoria { get; set; } = new();
+    public Categoria? Categoria { get; set; }
 }

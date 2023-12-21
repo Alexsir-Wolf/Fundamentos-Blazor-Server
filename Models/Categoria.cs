@@ -1,9 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using FundamentosBlazorServer.Models.Base;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FundamentosBlazorServer.Models;
 
-public class Categoria
+public class Categoria : BaseEntity<int>
 {
     public Categoria()
     {            
@@ -19,7 +20,7 @@ public class Categoria
 
 	[Key]
 	[Required(ErrorMessage = "Id é obrigatório.")]
-	public int Id { get; set; }
+	public override int Id { get; set; }
 
 	[Required(ErrorMessage = "Nome é obrigatório")]
 	[MaxLength(50, ErrorMessage = "Nome deve conter no máximo de 50 caracteres")]
@@ -27,5 +28,5 @@ public class Categoria
 	public string Nome { get; set; } = string.Empty;
 
     [InverseProperty("Categoria")]
-    public List<Produto>? Produtos { get; set; } = new();
+	public List<Produto>? Produtos { get; set; }
 }

@@ -1,0 +1,100 @@
+﻿@page "/produtos/editar/{id:int}"
+@inject AppDbContext _context
+@inject NavigationManager _navManager
+
+<h1>@_model?.Nome</h1>
+
+<EditForm Model="_model" OnValidSubmit="@HandlerSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="mb-3">
+        <label for="Nome" class="form-label">Nome</label>
+        <InputText class="form-control" type="text" id="Nome" @bind-Value="_model.Nome" />
+    </div>
+
+    <div class="mb-3">
+        <label for="Preco" class="form-label">Preco</label>
+        <InputNumber class="form-control" type="text" id="Preco" @bind-Value="_model.Preco" />
+    </div>
+
+    <div class="mb-3">
+        <label for="CategoriaId" class="form-label">Categoria</label>
+        <InputSelect id="CategoriaId" @bind-Value="_model.CategoriaId" class="form-control">
+            @foreach (var categoria in _categorias)
+            {
+                <option value="@categoria.Id">
+                    @categoria.Nome
+                </option>
+            }
+        </InputSelect>
+    </div>
+
+    <br />
+
+    @if (!string.IsNullOrEmpty(_errorMessage))
+    {
+        <div class="alert alert-danger" role="alert">
+            @_errorMessage
+        </div>
+
+    }
+
+    <button class="btn btn-success" type="submit">
+        <i class="oi oi-pencil"></i> Salvar
+    </button>
+
+</EditForm>
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    private Produto? _model = new();
+    private List<Categoria> _categorias = new();
+    private string? _errorMessage = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _categorias = await _context
+            .Categoria
+            .AsNoTracking()
+            .ToListAsync();
+
+        _model = await _context
+            .Produto
+            .AsNoTracking()
+            .FirstOrDefaultAsync(x => x.Id == Id);
+    }
+
+    async Task HandlerSubmit()
+    {
+        try
+        {
+            var prod = await _context
+                .Produto
+                .FirstOrDefaultAsync(x => x.Id == Id);
+
+            if (prod is null)
+                throw new Exception("Produto não encontrado.");
+
+            prod.Nome = _model.Nome;
+            prod.Preco = _model.Preco;
+            prod.CategoriaId = _model.CategoriaId;
+            prod.DataAlteracao = DateTime.Now;
+            prod.Ativo = true;
+
+            _context.Set<Produto>().Update(prod);
+            await _context.SaveChangesAsync();
+
+            _navManager.NavigateTo("/produtos");
+        }
+        catch (Exception)
+        {
+            _errorMessage = "Falha ao persistir os dados.";
+        }
+
+    }
+
+
+}
